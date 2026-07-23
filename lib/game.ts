@@ -1,6 +1,6 @@
 import { Player } from "@/lib/player";
-import { Quest } from "./quest";
-import { Achievement } from "./achievement";
+import { Quest } from "@/types/quest";
+import { Achievement } from "@/types/achievement";
 
 export type GameState = {
   player: Player;
