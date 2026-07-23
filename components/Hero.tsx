@@ -1,11 +1,17 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+
 export default function Hero() {
+  const router = useRouter();
+
   return (
     <section className="mx-auto flex min-h-[85vh] max-w-7xl items-center justify-between px-8">
 
       {/* Left Side */}
       <div className="max-w-xl">
 
-        <p className="mb-4 text-purple-400 font-semibold uppercase tracking-widest">
+        <p className="mb-4 font-semibold uppercase tracking-widest text-purple-400">
           Welcome to ECHO
         </p>
 
@@ -22,11 +28,22 @@ export default function Hero() {
 
         <div className="mt-10 flex gap-4">
 
-          <button className="rounded-xl bg-purple-600 px-8 py-4 font-semibold hover:bg-purple-500 transition">
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="rounded-xl bg-purple-600 px-8 py-4 font-semibold transition hover:bg-purple-500"
+          >
             Begin Journey
           </button>
 
-          <button className="rounded-xl border border-zinc-700 px-8 py-4 hover:border-purple-500 transition">
+          <button
+            onClick={() =>
+              window.scrollTo({
+                top: window.innerHeight,
+                behavior: "smooth",
+              })
+            }
+            className="rounded-xl border border-zinc-700 px-8 py-4 transition hover:border-purple-500"
+          >
             Learn More
           </button>
 
@@ -57,15 +74,12 @@ export default function Hero() {
             <p className="text-zinc-400">Echoes</p>
 
             <div className="mt-2 h-3 rounded-full bg-zinc-700">
-
               <div className="h-3 w-1/3 rounded-full bg-purple-500"></div>
-
             </div>
 
             <p className="mt-2 text-sm text-zinc-400">
               35 / 100 XP
             </p>
-
           </div>
 
           <div className="rounded-xl bg-zinc-800 p-4">
