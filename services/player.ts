@@ -21,7 +21,6 @@ export function rewardPlayer(
   let xp = player.xp + reward.xp;
   let level = player.level;
   let maxXp = player.maxXp;
-
   let skillPoints = player.skillPoints;
 
   let leveledUp = false;
@@ -31,7 +30,7 @@ export function rewardPlayer(
     level++;
     maxXp = getNextLevelXP(maxXp);
 
-    // Gain 1 skill point every level
+    // ⭐ Every level gives one skill point
     skillPoints++;
 
     leveledUp = true;
@@ -45,8 +44,8 @@ export function rewardPlayer(
       xp,
       level,
       maxXp,
-      coins: player.coins + reward.coins,
       skillPoints,
+      coins: player.coins + reward.coins,
     },
   };
 }
@@ -68,23 +67,5 @@ export function spendCoins(
   return {
     ...player,
     coins: Math.max(0, player.coins - amount),
-  };
-}
-
-export function spendSkillPoint(
-  player: Player,
-  skill: keyof Player["skills"]
-): Player {
-  if (player.skillPoints <= 0) {
-    return player;
-  }
-
-  return {
-    ...player,
-    skillPoints: player.skillPoints - 1,
-    skills: {
-      ...player.skills,
-      [skill]: player.skills[skill] + 1,
-    },
   };
 }

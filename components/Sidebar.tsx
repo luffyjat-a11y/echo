@@ -137,27 +137,38 @@ export default function Sidebar() {
           🛒 Shop
         </Link>
 
-        <Link
-          href="/dashboard/inventory"
-          className={`rounded-xl px-4 py-3 transition ${
-            pathname === "/dashboard/inventory"
-              ? "bg-purple-600 text-white"
-              : "hover:bg-purple-600"
-          }`}
-        >
-          🎒 Inventory
-        </Link>
+       <Link
+  href="/dashboard/inventory"
+  className={`rounded-xl px-4 py-3 transition ${
+    pathname === "/dashboard/inventory"
+      ? "bg-purple-600 text-white"
+      : "hover:bg-purple-600"
+  }`}
+>
+  🎒 Inventory
+</Link>
 
-        <Link
-          href="/dashboard/skills"
-          className={`rounded-xl px-4 py-3 transition ${
-            pathname === "/dashboard/skills"
-              ? "bg-purple-600 text-white"
-              : "hover:bg-purple-600"
-          }`}
-        >
-          🌳 Skill Tree
-        </Link>
+<Link
+  href="/dashboard/equipment"
+  className={`rounded-xl px-4 py-3 transition ${
+    pathname === "/dashboard/equipment"
+      ? "bg-purple-600 text-white"
+      : "hover:bg-purple-600"
+  }`}
+>
+  ⚔ Equipment
+</Link>
+
+<Link
+  href="/dashboard/skills"
+  className={`rounded-xl px-4 py-3 transition ${
+    pathname === "/dashboard/skills"
+      ? "bg-purple-600 text-white"
+      : "hover:bg-purple-600"
+  }`}
+>
+  🌳 Skill Tree
+</Link>
 
         <Link
           href="/dashboard/settings"

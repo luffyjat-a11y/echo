@@ -13,6 +13,7 @@ import { Achievement } from "@/types/achievement";
 
 import { dailyQuests } from "@/data/dailyQuests";
 import { defaultAchievements } from "@/data/achievements";
+import { skills } from "@/data/skills";
 
 import { loadGame, saveGame } from "@/lib/storage";
 import { getQuestRewards } from "@/lib/rewards";
@@ -28,6 +29,9 @@ import {
   buyItem,
   equipItem,
 } from "@/services/shop";
+import {
+  upgradeSkill,
+} from "@/services/skills";
 
 const defaultEquipped: EquippedItems = {
   avatar: null,
@@ -36,7 +40,8 @@ const defaultEquipped: EquippedItems = {
 };
 
 export function useGame() {
-  const [player, setPlayer] = useState<Player>(defaultPlayer);
+  const [player, setPlayer] =
+    useState<Player>(defaultPlayer);
 
   const [quests, setQuests] =
     useState<Quest[]>(dailyQuests);
@@ -61,8 +66,19 @@ export function useGame() {
 
     if (!game) return;
 
+    const loadedPlayer = {
+      ...defaultPlayer,
+      ...game.player,
+      skills: {
+        ...defaultPlayer.skills,
+        ...(game.player?.skills ?? {}),
+      },
+      skillPoints:
+        game.player?.skillPoints ?? 0,
+    };
+
     if (isNewDay(game.lastReset)) {
-      setPlayer(game.player);
+      setPlayer(loadedPlayer);
 
       setQuests(
         dailyQuests.map((q) => ({
@@ -84,8 +100,10 @@ export function useGame() {
 
       setLastReset(getTodayDate());
     } else {
-      setPlayer(game.player);
+      setPlayer(loadedPlayer);
+
       setQuests(game.quests);
+
       setAchievements(
         game.achievements ??
           defaultAchievements
@@ -126,7 +144,8 @@ export function useGame() {
 
     if (!quest || quest.completed) return;
 
-    const reward = getQuestRewards(quest);
+    const reward =
+      getQuestRewards(quest);
 
     const result =
       rewardPlayer(player, reward);
@@ -145,7 +164,9 @@ export function useGame() {
       );
 
     setPlayer(updatedPlayer);
+
     setQuests(updatedQuests);
+
     setAchievements(
       updatedAchievements
     );
@@ -169,6 +190,7 @@ export function useGame() {
     if (!result) return false;
 
     setPlayer(result.player);
+
     setInventory(result.inventory);
 
     return true;
@@ -176,7 +198,10 @@ export function useGame() {
 
   function equip(
     id: number,
-    category: "Avatar" | "Title" | "Theme"
+    category:
+      | "Avatar"
+      | "Title"
+      | "Theme"
   ) {
     const result = equipItem(
       inventory,
@@ -186,7 +211,27 @@ export function useGame() {
     );
 
     setInventory(result.inventory);
+
     setEquipped(result.equipped);
+  }
+
+  function upgradePlayerSkill(
+    skillId: string
+  ) {
+    const skill = skills.find(
+      (s) => s.id === skillId
+    );
+
+    if (!skill) return;
+
+    const updatedPlayer =
+      upgradeSkill(
+        player,
+        skillId,
+        skill.maxLevel
+      );
+
+    setPlayer(updatedPlayer);
   }
 
   function closeLevelUp() {
@@ -203,6 +248,7 @@ export function useGame() {
     completeQuest,
     purchaseItem,
     equip,
+    upgradePlayerSkill,
 
     showLevelUp,
     closeLevelUp,

@@ -1,23 +1,19 @@
-export type PlayerSkills = {
-  strength: number;
-  focus: number;
-  discipline: number;
-  health: number;
-};
-
 export type Player = {
   name: string;
+
   level: number;
+
   xp: number;
+
   maxXp: number;
+
   coins: number;
+
   streak: number;
 
-  // NEW
   skillPoints: number;
 
-  // NEW
-  skills: PlayerSkills;
+  skills: Record<string, number>;
 };
 
 export const defaultPlayer: Player = {
@@ -33,14 +29,13 @@ export const defaultPlayer: Player = {
 
   streak: 1,
 
-  // NEW
   skillPoints: 0,
 
-  // NEW
   skills: {
     strength: 0,
-    focus: 0,
-    discipline: 0,
-    health: 0,
+    speed: 0,
+    fortune: 0,
+    vitality: 0,
+    wisdom: 0,
   },
 };
