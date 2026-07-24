@@ -2,7 +2,9 @@
 
 import Sidebar from "@/components/Sidebar";
 import DashboardHeader from "@/components/DashboardHeader";
+
 import LevelUpModal from "@/components/levelup/LevelUpModal";
+import AnimatedBackground from "@/components/effects/AnimatedBackground";
 
 import { useGameContext } from "@/context/GameContext";
 
@@ -25,16 +27,27 @@ export default function DashboardShell({
         onClose={closeLevelUp}
       />
 
-      <main className="flex min-h-screen bg-zinc-950 text-white">
-        <Sidebar />
+      <main className="relative flex min-h-screen overflow-hidden bg-zinc-950 text-white">
 
-        <section className="flex-1 p-8">
+        {/* Animated Background */}
+        <AnimatedBackground />
+
+        {/* Sidebar */}
+        <div className="relative z-10">
+          <Sidebar />
+        </div>
+
+        {/* Main Content */}
+        <section className="relative z-10 flex-1 p-8">
+
           <DashboardHeader />
 
           <div className="mt-8">
             {children}
           </div>
+
         </section>
+
       </main>
     </>
   );

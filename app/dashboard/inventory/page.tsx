@@ -2,13 +2,10 @@
 
 import { useGameContext } from "@/context/GameContext";
 import { shopItems } from "@/data/shopItems";
+import GlassCard from "@/components/ui/GlassCard";
 
 export default function InventoryPage() {
-  const {
-    inventory,
-    equipped,
-    equip,
-  } = useGameContext();
+  const { inventory } = useGameContext();
 
   const ownedItems = shopItems.filter((item) =>
     inventory.some((i) => i.id === item.id)
@@ -21,58 +18,41 @@ export default function InventoryPage() {
       </h1>
 
       {ownedItems.length === 0 ? (
-        <div className="rounded-2xl bg-zinc-900 p-8 text-center text-zinc-400">
-          You don't own any items yet.
-        </div>
+        <GlassCard className="p-8 text-center">
+          <p className="text-zinc-400 text-lg">
+            You don't own any items yet.
+          </p>
+        </GlassCard>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {ownedItems.map((item) => {
-            const isEquipped =
-              equipped.avatar === item.id ||
-              equipped.title === item.id ||
-              equipped.theme === item.id;
-
-            return (
-              <div
-                key={item.id}
-                className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6"
-              >
-                <div className="text-5xl">
-                  {item.icon}
-                </div>
-
-                <h2 className="mt-4 text-2xl font-bold">
-                  {item.name}
-                </h2>
-
-                <p className="mt-2 text-zinc-400">
-                  {item.description}
-                </p>
-
-                <div className="mt-6 flex items-center justify-between">
-                  <span className="rounded-full bg-green-600 px-4 py-2 font-bold">
-                    ✓ Owned
-                  </span>
-
-                  <button
-                    onClick={() =>
-                      equip(item.id, item.category)
-                    }
-                    disabled={isEquipped}
-                    className={`rounded-xl px-4 py-2 font-bold transition ${
-                      isEquipped
-                        ? "cursor-not-allowed bg-zinc-700 text-zinc-400"
-                        : "bg-purple-600 hover:bg-purple-500"
-                    }`}
-                  >
-                    {isEquipped
-                      ? "Equipped"
-                      : "Equip"}
-                  </button>
-                </div>
+          {ownedItems.map((item) => (
+            <GlassCard
+              key={item.id}
+              className="p-6"
+            >
+              <div className="text-5xl">
+                {item.icon}
               </div>
-            );
-          })}
+
+              <h2 className="mt-4 text-2xl font-bold">
+                {item.name}
+              </h2>
+
+              <p className="mt-2 text-zinc-300">
+                {item.description}
+              </p>
+
+              <div className="mt-6 flex items-center justify-between">
+                <span className="rounded-full bg-green-600/90 px-4 py-2 font-bold text-white">
+                  ✓ Owned
+                </span>
+
+                <span className="text-sm text-zinc-400">
+                  {item.category}
+                </span>
+              </div>
+            </GlassCard>
+          ))}
         </div>
       )}
     </div>

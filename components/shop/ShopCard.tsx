@@ -1,3 +1,7 @@
+"use client";
+
+import GlassCard from "@/components/ui/GlassCard";
+import RarityBadge from "@/components/ui/RarityBadge";
 import { ShopItem } from "@/data/shopItems";
 
 type ShopCardProps = {
@@ -15,52 +19,67 @@ export default function ShopCard({
 }: ShopCardProps) {
   const canBuy = coins >= item.price;
 
+  const glow = {
+    Common: "hover:shadow-zinc-500/20",
+    Rare: "hover:shadow-blue-500/40",
+    Epic: "hover:shadow-purple-500/50",
+    Legendary: "hover:shadow-orange-400/60",
+  };
+
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 transition hover:border-purple-500 hover:scale-105">
-      <div className="text-5xl">
-        {item.icon}
+    <GlassCard
+      className={`p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
+        glow[item.rarity]
+      }`}
+    >
+      <div className="flex items-start justify-between">
+        <div className="text-6xl">
+          {item.icon}
+        </div>
+
+        <RarityBadge rarity={item.rarity} />
       </div>
 
-      <h2 className="mt-4 text-2xl font-bold">
+      <h2 className="mt-5 text-2xl font-bold">
         {item.name}
       </h2>
 
-      <p className="mt-2 text-zinc-400">
+      <p className="mt-3 text-zinc-300">
         {item.description}
       </p>
 
-      <div className="mt-2">
-        <span className="rounded-full bg-zinc-800 px-3 py-1 text-sm text-purple-300">
-          {item.category}
-        </span>
-      </div>
-
       <div className="mt-6 flex items-center justify-between">
-        <span className="font-bold text-yellow-400">
-          💰 {item.price}
-        </span>
+        <div>
+          <p className="text-sm text-zinc-400">
+            Price
+          </p>
+
+          <p className="text-2xl font-bold text-yellow-400">
+            🪙 {item.price}
+          </p>
+        </div>
 
         {owned ? (
           <button
             disabled
-            className="cursor-not-allowed rounded-xl bg-green-600 px-5 py-2 font-bold text-white"
+            className="rounded-xl bg-green-600 px-5 py-3 font-bold text-white"
           >
             ✓ Owned
           </button>
         ) : (
           <button
-            disabled={!canBuy}
             onClick={() => onBuy(item.id)}
-            className={`rounded-xl px-5 py-2 font-bold transition ${
+            disabled={!canBuy}
+            className={`rounded-xl px-5 py-3 font-bold transition ${
               canBuy
                 ? "bg-purple-600 hover:bg-purple-500"
                 : "cursor-not-allowed bg-zinc-700 text-zinc-500"
             }`}
           >
-            {canBuy ? "Buy" : "Not enough coins"}
+            {canBuy ? "Buy" : "Not Enough"}
           </button>
         )}
       </div>
-    </div>
+    </GlassCard>
   );
 }

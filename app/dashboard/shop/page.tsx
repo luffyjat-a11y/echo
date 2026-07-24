@@ -1,7 +1,7 @@
 "use client";
 
-import ShopHeader from "@/components/shop/ShopHeader";
-import ShopGrid from "@/components/shop/ShopGrid";
+import CoinDisplay from "@/components/ui/CoinDisplay";
+import ShopCard from "@/components/shop/ShopCard";
 
 import { shopItems } from "@/data/shopItems";
 import { useGameContext } from "@/context/GameContext";
@@ -13,7 +13,7 @@ export default function ShopPage() {
     purchaseItem,
   } = useGameContext();
 
-  function buy(id: number) {
+  function handleBuy(id: number) {
     const item = shopItems.find((i) => i.id === id);
 
     if (!item) return;
@@ -24,30 +24,45 @@ export default function ShopPage() {
     );
 
     if (!success) {
-      if (
-        inventory.some((i) => i.id === item.id)
-      ) {
-        alert("You already own this item!");
-      } else {
-        alert("Not enough Echo Coins!");
-      }
-
+      alert("Purchase failed!");
       return;
     }
 
-    alert(`Purchased ${item.name}!`);
+    alert(`🎉 You purchased ${item.name}!`);
   }
 
   return (
     <div className="space-y-8">
-      <ShopHeader coins={player.coins} />
 
-      <ShopGrid
-        items={shopItems}
-        coins={player.coins}
-        inventory={inventory}
-        onBuy={buy}
-      />
+      <CoinDisplay coins={player.coins} />
+
+      <div>
+        <h1 className="text-4xl font-bold">
+          🛒 Echo Shop
+        </h1>
+
+        <p className="mt-2 text-zinc-400">
+          Spend your Echo Coins to unlock cosmetics,
+          titles and themes.
+        </p>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+
+        {shopItems.map((item) => (
+          <ShopCard
+            key={item.id}
+            item={item}
+            coins={player.coins}
+            owned={inventory.some(
+              (i) => i.id === item.id
+            )}
+            onBuy={handleBuy}
+          />
+        ))}
+
+      </div>
+
     </div>
   );
 }

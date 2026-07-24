@@ -1,45 +1,68 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
+type Star = {
+  width: number;
+  height: number;
+  left: number;
+  top: number;
+  opacity: number;
+  delay: number;
+  duration: number;
+};
+
 export default function AnimatedBackground() {
+  const [stars, setStars] = useState<Star[]>([]);
+
+  useEffect(() => {
+    const generated = Array.from({ length: 80 }, () => ({
+      width: Math.random() * 3 + 1,
+      height: Math.random() * 3 + 1,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      opacity: Math.random() * 0.6 + 0.2,
+      delay: Math.random() * 4,
+      duration: Math.random() * 5 + 2,
+    }));
+
+    setStars(generated);
+  }, []);
+
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-zinc-950 via-purple-950/30 to-black" />
 
-      {/* Main Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black via-zinc-950 to-purple-950" />
+      {/* Glow */}
+      <div className="absolute -left-40 top-20 h-96 w-96 rounded-full bg-purple-600/20 blur-3xl animate-pulse" />
 
-      {/* Orb 1 */}
-      <div className="absolute left-10 top-10 h-96 w-96 animate-pulse rounded-full bg-purple-600/20 blur-3xl" />
+      <div
+        className="absolute right-0 top-1/3 h-[500px] w-[500px] rounded-full bg-fuchsia-600/15 blur-3xl animate-pulse"
+        style={{ animationDuration: "6s" }}
+      />
 
-      {/* Orb 2 */}
-      <div className="absolute right-20 top-40 h-[500px] w-[500px] animate-pulse rounded-full bg-fuchsia-600/10 blur-3xl" />
+      <div
+        className="absolute bottom-0 left-1/3 h-[420px] w-[420px] rounded-full bg-violet-500/10 blur-3xl animate-pulse"
+        style={{ animationDuration: "8s" }}
+      />
 
-      {/* Orb 3 */}
-      <div className="absolute bottom-0 left-1/3 h-[420px] w-[420px] animate-pulse rounded-full bg-violet-500/10 blur-3xl" />
-
-      {/* Small Floating Particles */}
-      {[...Array(30)].map((_, i) => (
+      {/* Stars */}
+      {stars.map((star, index) => (
         <div
-          key={i}
-          className="absolute animate-pulse rounded-full bg-purple-400/40"
+          key={index}
+          className="absolute rounded-full bg-white animate-pulse"
           style={{
-            width: `${4 + Math.random() * 6}px`,
-            height: `${4 + Math.random() * 6}px`,
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animationDuration: `${2 + Math.random() * 5}s`,
+            width: `${star.width}px`,
+            height: `${star.height}px`,
+            left: `${star.left}%`,
+            top: `${star.top}%`,
+            opacity: star.opacity,
+            animationDelay: `${star.delay}s`,
+            animationDuration: `${star.duration}s`,
           }}
         />
       ))}
-
-      {/* Grid Overlay */}
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px)",
-          backgroundSize: "50px 50px",
-        }}
-      />
     </div>
   );
 }
