@@ -13,6 +13,11 @@ export type EquippedItems = {
   theme: number | null;
 };
 
+export type Chest = {
+  id: number;
+  opened: boolean;
+};
+
 export type GameState = {
   player: Player;
 
@@ -23,6 +28,8 @@ export type GameState = {
   inventory: InventoryItem[];
 
   equipped: EquippedItems;
+
+  chests: Chest[];
 
   lastReset: string;
 };

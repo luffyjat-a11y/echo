@@ -1,5 +1,8 @@
 "use client";
 
+import { rollLoot } from "@/services/loot";
+import { unlockItem } from "@/services/shop";
+
 import { useEffect, useState } from "react";
 
 import { Player, defaultPlayer } from "@/lib/player";
@@ -7,6 +10,7 @@ import {
   GameState,
   InventoryItem,
   EquippedItems,
+  Chest,
 } from "@/types/game";
 import { Quest } from "@/types/quest";
 import { Achievement } from "@/types/achievement";
@@ -29,9 +33,7 @@ import {
   buyItem,
   equipItem,
 } from "@/services/shop";
-import {
-  upgradeSkill,
-} from "@/services/skills";
+import { upgradeSkill } from "@/services/skills";
 
 const defaultEquipped: EquippedItems = {
   avatar: null,
@@ -51,6 +53,9 @@ export function useGame() {
 
   const [inventory, setInventory] =
     useState<InventoryItem[]>([]);
+
+  const [chests, setChests] =
+    useState<Chest[]>([]);
 
   const [equipped, setEquipped] =
     useState<EquippedItems>(defaultEquipped);
@@ -94,8 +99,11 @@ export function useGame() {
 
       setInventory(game.inventory ?? []);
 
+      setChests(game.chests ?? []);
+
       setEquipped(
-        game.equipped ?? defaultEquipped
+        game.equipped ??
+          defaultEquipped
       );
 
       setLastReset(getTodayDate());
@@ -111,8 +119,11 @@ export function useGame() {
 
       setInventory(game.inventory ?? []);
 
+      setChests(game.chests ?? []);
+
       setEquipped(
-        game.equipped ?? defaultEquipped
+        game.equipped ??
+          defaultEquipped
       );
 
       setLastReset(game.lastReset);
@@ -126,6 +137,7 @@ export function useGame() {
       achievements,
       inventory,
       equipped,
+      chests,
       lastReset,
     };
 
@@ -136,121 +148,175 @@ export function useGame() {
     achievements,
     inventory,
     equipped,
+    chests,
     lastReset,
   ]);
 
-  function completeQuest(id: number) {
-    const quest = getQuest(quests, id);
 
-    if (!quest || quest.completed) return;
+function completeQuest(id: number) {
+  const quest = getQuest(quests, id);
 
-    const reward =
-      getQuestRewards(quest);
+  if (!quest || quest.completed) return;
 
-    const result =
-      rewardPlayer(player, reward);
+  const reward = getQuestRewards(
+    quest,
+    player
+  );
 
-    const updatedPlayer =
-      result.player;
+  const result =
+    rewardPlayer(player, reward);
 
-    const updatedQuests =
-      finishQuest(quests, id);
+  const updatedPlayer =
+    result.player;
 
-    const updatedAchievements =
-      updateAchievementProgress(
-        achievements,
-        updatedPlayer,
-        updatedQuests
-      );
+  const updatedQuests =
+    finishQuest(quests, id);
 
-    setPlayer(updatedPlayer);
-
-    setQuests(updatedQuests);
-
-    setAchievements(
-      updatedAchievements
+  const updatedAchievements =
+    updateAchievementProgress(
+      achievements,
+      updatedPlayer,
+      updatedQuests
     );
 
-    if (result.leveledUp) {
-      setShowLevelUp(true);
-    }
+  // 🎁 20% Chest Drop Chance
+  let updatedChests = [...chests];
+
+  if (Math.random() <= 0.2) {
+    updatedChests.push({
+      id: Date.now(),
+      opened: false,
+    });
   }
 
-  function purchaseItem(
-    id: number,
-    price: number
-  ) {
-    const result = buyItem(
-      player,
-      inventory,
-      id,
-      price
-    );
+  setPlayer(updatedPlayer);
 
-    if (!result) return false;
+  setQuests(updatedQuests);
 
-    setPlayer(result.player);
+  setAchievements(
+    updatedAchievements
+  );
 
-    setInventory(result.inventory);
+  setChests(updatedChests);
 
-    return true;
+  if (result.leveledUp) {
+    setShowLevelUp(true);
   }
+}
 
-  function equip(
-    id: number,
-    category:
-      | "Avatar"
-      | "Title"
-      | "Theme"
-  ) {
-    const result = equipItem(
-      inventory,
-      equipped,
-      id,
-      category
-    );
-
-    setInventory(result.inventory);
-
-    setEquipped(result.equipped);
-  }
-
-  function upgradePlayerSkill(
-    skillId: string
-  ) {
-    const skill = skills.find(
-      (s) => s.id === skillId
-    );
-
-    if (!skill) return;
-
-    const updatedPlayer =
-      upgradeSkill(
-        player,
-        skillId,
-        skill.maxLevel
-      );
-
-    setPlayer(updatedPlayer);
-  }
-
-  function closeLevelUp() {
-    setShowLevelUp(false);
-  }
-
-  return {
+function purchaseItem(
+  id: number,
+  price: number
+) {
+  const result = buyItem(
     player,
-    quests,
-    achievements,
+    inventory,
+    id,
+    price
+  );
+
+  if (!result) return false;
+
+  setPlayer(result.player);
+  setInventory(result.inventory);
+
+  return true;
+}
+
+function equip(
+  id: number,
+  category:
+    | "Avatar"
+    | "Title"
+    | "Theme"
+) {
+  const result = equipItem(
     inventory,
     equipped,
+    id,
+    category
+  );
 
-    completeQuest,
-    purchaseItem,
-    equip,
-    upgradePlayerSkill,
+  setInventory(result.inventory);
+  setEquipped(result.equipped);
+}
 
-    showLevelUp,
-    closeLevelUp,
-  };
+function upgradePlayerSkill(
+  skillId: string
+) {
+  const skill = skills.find(
+    (s) => s.id === skillId
+  );
+
+  if (!skill) return;
+
+  const updatedPlayer =
+    upgradeSkill(
+      player,
+      skillId,
+      skill.maxLevel
+    );
+
+  setPlayer(updatedPlayer);
+}
+
+// 📦 Open Chest
+function openChest(chestId: number) {
+  const loot = rollLoot();
+
+  const result = unlockItem(
+    player,
+    inventory,
+    loot.itemId
+  );
+
+  setPlayer(result.player);
+  setInventory(result.inventory);
+
+  setChests((prev) =>
+    prev.map((chest) =>
+      chest.id === chestId
+        ? {
+            ...chest,
+            opened: true,
+          }
+        : chest
+    )
+  );
+
+  return loot;
+}
+
+// 📦 Remove Opened Chests
+function clearOpenedChests() {
+  setChests((prev) =>
+    prev.filter(
+      (chest) => !chest.opened
+    )
+  );
+}
+
+function closeLevelUp() {
+  setShowLevelUp(false);
+}
+
+return {
+  player,
+  quests,
+  achievements,
+  inventory,
+  equipped,
+  chests,
+
+  completeQuest,
+  purchaseItem,
+  equip,
+  upgradePlayerSkill,
+
+  openChest,
+  clearOpenedChests,
+
+  showLevelUp,
+  closeLevelUp,
+};
 }

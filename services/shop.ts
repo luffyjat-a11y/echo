@@ -21,7 +21,11 @@ export function buyItem(
     return null;
   }
 
-  if (inventory.some((item) => item.id === id)) {
+  if (
+    inventory.some(
+      (item) => item.id === id
+    )
+  ) {
     return null;
   }
 
@@ -41,16 +45,59 @@ export function buyItem(
   };
 }
 
+export function unlockItem(
+  player: Player,
+  inventory: InventoryItem[],
+  id: number
+) {
+  // Already owned
+  if (
+    inventory.some(
+      (item) => item.id === id
+    )
+  ) {
+    return {
+      player: {
+        ...player,
+        // Duplicate reward
+        coins: player.coins + 50,
+      },
+
+      inventory,
+
+      duplicate: true,
+    };
+  }
+
+  return {
+    player,
+
+    inventory: [
+      ...inventory,
+      {
+        id,
+        equipped: false,
+      },
+    ],
+
+    duplicate: false,
+  };
+}
+
 export function equipItem(
   inventory: InventoryItem[],
   equipped: EquippedItems,
   id: number,
-  category: "Avatar" | "Title" | "Theme"
+  category:
+    | "Avatar"
+    | "Title"
+    | "Theme"
 ) {
-  const updatedInventory = inventory.map((item) => ({
-    ...item,
-    equipped: item.id === id,
-  }));
+  const updatedInventory =
+    inventory.map((item) => ({
+      ...item,
+      equipped: item.id === id,
+    }));
 
   const updatedEquipped = {
     ...equipped,

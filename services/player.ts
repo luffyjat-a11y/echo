@@ -23,6 +23,17 @@ export function rewardPlayer(
   let maxXp = player.maxXp;
   let skillPoints = player.skillPoints;
 
+  let health = player.health;
+  let maxHealth = player.maxHealth;
+
+  let stamina = player.stamina;
+  let maxStamina = player.maxStamina;
+
+  let attack = player.attack;
+  let defense = player.defense;
+  let critChance = player.critChance;
+  let speed = player.speed;
+
   let leveledUp = false;
 
   while (shouldLevelUp(xp, maxXp)) {
@@ -30,8 +41,20 @@ export function rewardPlayer(
     level++;
     maxXp = getNextLevelXP(maxXp);
 
-    // ⭐ Every level gives one skill point
+    // ⭐ One Skill Point
     skillPoints++;
+
+    // ❤️ Increase Stats
+    maxHealth += 10;
+    health = maxHealth;
+
+    maxStamina += 5;
+    stamina = maxStamina;
+
+    attack += 2;
+    defense += 1;
+    critChance += 1;
+    speed += 1;
 
     leveledUp = true;
   }
@@ -41,11 +64,25 @@ export function rewardPlayer(
 
     player: {
       ...player,
+
       xp,
       level,
       maxXp,
+
       skillPoints,
+
       coins: player.coins + reward.coins,
+
+      health,
+      maxHealth,
+
+      stamina,
+      maxStamina,
+
+      attack,
+      defense,
+      critChance,
+      speed,
     },
   };
 }
@@ -66,6 +103,9 @@ export function spendCoins(
 ): Player {
   return {
     ...player,
-    coins: Math.max(0, player.coins - amount),
+    coins: Math.max(
+      0,
+      player.coins - amount
+    ),
   };
 }

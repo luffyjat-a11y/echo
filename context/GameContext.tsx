@@ -8,10 +8,13 @@ import {
 
 import { useGame } from "@/hooks/useGame";
 
-type GameContextType = ReturnType<typeof useGame>;
+type GameContextType =
+  ReturnType<typeof useGame>;
 
 const GameContext =
-  createContext<GameContextType | null>(null);
+  createContext<GameContextType | null>(
+    null
+  );
 
 export function GameProvider({
   children,
@@ -28,7 +31,8 @@ export function GameProvider({
 }
 
 export function useGameContext() {
-  const context = useContext(GameContext);
+  const context =
+    useContext(GameContext);
 
   if (!context) {
     throw new Error(
