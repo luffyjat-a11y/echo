@@ -3,31 +3,36 @@
 type EquipmentSlotProps = {
   icon: string;
   label: string;
-  value: string;
+  itemName?: string;
+  onClick?: () => void;
 };
 
 export default function EquipmentSlot({
   icon,
   label,
-  value,
+  itemName,
+  onClick,
 }: EquipmentSlotProps) {
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4 backdrop-blur-md">
+    <button
+      onClick={onClick}
+      className="flex w-full items-center justify-between rounded-2xl border border-zinc-700 bg-zinc-900 p-4 transition hover:border-purple-500 hover:bg-zinc-800"
+    >
       <div className="flex items-center gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-600 text-2xl">
-          {icon}
-        </div>
+        <span className="text-3xl">{icon}</span>
 
-        <div>
+        <div className="text-left">
+          <p className="font-bold">{label}</p>
+
           <p className="text-sm text-zinc-400">
-            {label}
-          </p>
-
-          <p className="font-bold text-white">
-            {value}
+            {itemName ?? "Empty"}
           </p>
         </div>
       </div>
-    </div>
+
+      <span className="text-zinc-500">
+        ▶
+      </span>
+    </button>
   );
 }

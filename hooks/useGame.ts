@@ -22,6 +22,10 @@ import { skills } from "@/data/skills";
 import { loadGame, saveGame } from "@/lib/storage";
 import { getQuestRewards } from "@/lib/rewards";
 import { getTodayDate, isNewDay } from "@/lib/date";
+import {
+  updatePlayerEquipment,
+  equipSlot,
+} from "@/services/equipmentManager";
 
 import { rewardPlayer } from "@/services/player";
 import {
@@ -36,9 +40,18 @@ import {
 import { upgradeSkill } from "@/services/skills";
 
 const defaultEquipped: EquippedItems = {
+  // Cosmetic
   avatar: null,
   title: null,
   theme: null,
+
+  // Combat
+  weapon: null,
+  armor: null,
+  helmet: null,
+  boots: null,
+  ring: null,
+  necklace: null,
 };
 
 export function useGame() {
@@ -241,6 +254,32 @@ function equip(
   setEquipped(result.equipped);
 }
 
+function equipCombatItem(
+  id: number,
+  slot:
+    | "weapon"
+    | "armor"
+    | "helmet"
+    | "boots"
+    | "ring"
+    | "necklace"
+) {
+  const updatedEquipped = equipSlot(
+    equipped,
+    slot,
+    id
+  );
+
+  const updatedPlayer =
+    updatePlayerEquipment(
+      player,
+      updatedEquipped
+    );
+
+  setEquipped(updatedEquipped);
+  setPlayer(updatedPlayer);
+}
+
 function upgradePlayerSkill(
   skillId: string
 ) {
@@ -310,7 +349,10 @@ return {
 
   completeQuest,
   purchaseItem,
+
   equip,
+  equipCombatItem,
+
   upgradePlayerSkill,
 
   openChest,
@@ -318,5 +360,5 @@ return {
 
   showLevelUp,
   closeLevelUp,
-};
+};;
 }

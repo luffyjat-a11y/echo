@@ -4,13 +4,25 @@ import { Achievement } from "./achievement";
 
 export type InventoryItem = {
   id: number;
+
   equipped: boolean;
+
+  slot?: string;
 };
 
 export type EquippedItems = {
+  // Cosmetic
   avatar: number | null;
   title: number | null;
   theme: number | null;
+
+  // Combat Gear
+  weapon: number | null;
+  armor: number | null;
+  helmet: number | null;
+  boots: number | null;
+  ring: number | null;
+  necklace: number | null;
 };
 
 export type Chest = {

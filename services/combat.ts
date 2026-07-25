@@ -1,50 +1,24 @@
 import { Player } from "@/lib/player";
 import { Enemy } from "@/types/enemy";
 
-export type AttackResult = {
-  player: Player;
-  enemy: Enemy;
-
-  playerDamage: number;
-  enemyDamage: number;
-
-  critical: boolean;
-
-  playerDead: boolean;
-  enemyDead: boolean;
-};
-
-function random(min: number, max: number) {
-  return (
-    Math.floor(
-      Math.random() * (max - min + 1)
-    ) + min
-  );
-}
-
 export function battleTurn(
   player: Player,
   enemy: Enemy
-): AttackResult {
-  const critical =
-    Math.random() * 100 <
-    player.critChance;
+) {
+  let critical = false;
 
-  let playerDamage =
-    player.attack +
-    random(0, 3) -
-    enemy.defense;
+  // ---------- PLAYER ATTACK ----------
+  let playerDamage = Math.max(
+    1,
+    player.attack - enemy.defense
+  );
 
-  if (critical) {
+  if (Math.random() * 100 < player.critChance) {
+    critical = true;
     playerDamage *= 2;
   }
 
-  playerDamage = Math.max(
-    1,
-    playerDamage
-  );
-
-  const updatedEnemy = {
+  const updatedEnemy: Enemy = {
     ...enemy,
     health: Math.max(
       0,
@@ -52,58 +26,50 @@ export function battleTurn(
     ),
   };
 
-  if (updatedEnemy.health <= 0) {
+  const enemyDead = updatedEnemy.health <= 0;
+
+  // Enemy defeated before attacking
+  if (enemyDead) {
     return {
       player,
-
       enemy: updatedEnemy,
 
       playerDamage,
-
       enemyDamage: 0,
 
       critical,
 
-      playerDead: false,
-
       enemyDead: true,
+      playerDead: false,
     };
   }
 
-  let enemyDamage =
-    enemy.attack +
-    random(0, 2) -
-    player.defense;
-
-  enemyDamage = Math.max(
+  // ---------- ENEMY ATTACK ----------
+  const enemyDamage = Math.max(
     1,
-    enemyDamage
+    updatedEnemy.attack - player.defense
   );
 
-  const updatedPlayer = {
+  const updatedPlayer: Player = {
     ...player,
-
     health: Math.max(
       0,
       player.health - enemyDamage
     ),
   };
 
+  const playerDead = updatedPlayer.health <= 0;
+
   return {
     player: updatedPlayer,
-
     enemy: updatedEnemy,
 
     playerDamage,
-
     enemyDamage,
 
     critical,
 
-    playerDead:
-      updatedPlayer.health <= 0,
-
-    enemyDead:
-      updatedEnemy.health <= 0,
+    enemyDead: false,
+    playerDead,
   };
 }

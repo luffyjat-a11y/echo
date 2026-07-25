@@ -12,6 +12,9 @@ import { rewardPlayer } from "@/services/player";
 
 import BattleCard from "@/components/battle/BattleCard";
 import BattleLog from "@/components/battle/BattleLog";
+import BattleEffects from "@/components/battle/BattleEffects";
+
+import { useBattleAnimation } from "@/hooks/useBattleAnimation";
 
 export default function BattlePage() {
   const { player } = useGameContext();
@@ -22,7 +25,15 @@ export default function BattlePage() {
   const [selectedEnemy, setSelectedEnemy] =
     useState<Enemy | null>(null);
 
-  const [logs, setLogs] = useState<string[]>([]);
+  const [logs, setLogs] =
+    useState<string[]>([]);
+
+  const {
+    showEffect,
+    critical,
+    damage,
+    play,
+  } = useBattleAnimation();
 
   function startBattle(enemy: Enemy) {
     setBattlePlayer({
@@ -48,8 +59,12 @@ export default function BattlePage() {
       selectedEnemy
     );
 
-    setBattlePlayer(result.player);
+    play(
+      result.playerDamage,
+      result.critical
+    );
 
+    setBattlePlayer(result.player);
     setSelectedEnemy(result.enemy);
 
     const newLogs: string[] = [];
@@ -90,6 +105,12 @@ export default function BattlePage() {
       newLogs.push(
         `💰 +${selectedEnemy.coins} Coins`
       );
+
+      if (reward.leveledUp) {
+        newLogs.push(
+          `🎉 LEVEL UP! You are now Level ${reward.player.level}!`
+        );
+      }
     }
 
     if (result.playerDead) {
@@ -135,29 +156,12 @@ export default function BattlePage() {
               </p>
 
               <div className="mt-6 space-y-1 text-zinc-300">
-
-                <p>
-                  ❤️ {enemy.maxHealth}
-                </p>
-
-                <p>
-                  ⚔ {enemy.attack}
-                </p>
-
-                <p>
-                  🛡 {enemy.defense}
-                </p>
-
-                <p>
-                  ⭐ {enemy.xp} XP
-                </p>
-
-                <p>
-                  💰 {enemy.coins} Coins
-                </p>
-
+                <p>❤️ {enemy.maxHealth}</p>
+                <p>⚔ {enemy.attack}</p>
+                <p>🛡 {enemy.defense}</p>
+                <p>⭐ {enemy.xp} XP</p>
+                <p>💰 {enemy.coins} Coins</p>
               </div>
-
             </button>
           ))}
 
@@ -168,7 +172,7 @@ export default function BattlePage() {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-950 p-8 text-white">
+    <main className="relative min-h-screen bg-zinc-950 p-8 text-white">
 
       <button
         onClick={() =>
@@ -193,9 +197,7 @@ export default function BattlePage() {
           maxHealth={battlePlayer.maxHealth}
           attack={battlePlayer.attack}
           defense={battlePlayer.defense}
-          critChance={
-            battlePlayer.critChance
-          }
+          critChance={battlePlayer.critChance}
           isPlayer
         />
 
@@ -204,9 +206,7 @@ export default function BattlePage() {
           name={selectedEnemy.name}
           level={selectedEnemy.level}
           health={selectedEnemy.health}
-          maxHealth={
-            selectedEnemy.maxHealth
-          }
+          maxHealth={selectedEnemy.maxHealth}
           attack={selectedEnemy.attack}
           defense={selectedEnemy.defense}
         />
@@ -225,10 +225,14 @@ export default function BattlePage() {
       </button>
 
       <div className="mt-10">
-
         <BattleLog logs={logs} />
-
       </div>
+
+      <BattleEffects
+        visible={showEffect}
+        critical={critical}
+        damage={damage}
+      />
 
     </main>
   );
