@@ -22,11 +22,9 @@ export default function Sidebar() {
   const {
     player,
     equipped,
-    chests,
   } = useGameContext();
 
-  const percentage =
-    (player.xp / player.maxXp) * 100;
+  const percentage = (player.xp / player.maxXp) * 100;
 
   const avatar =
     shopItems.find(
@@ -38,16 +36,10 @@ export default function Sidebar() {
       (item) => item.id === equipped.title
     )?.name ?? getRank(player.level);
 
-  const unopenedChests =
-    chests.filter(
-      (chest) => !chest.opened
-    ).length;
-
   return (
     <aside className="flex min-h-screen w-64 flex-col border-r border-zinc-800 bg-zinc-900 p-6">
 
       {/* Logo */}
-
       <div>
 
         <h1 className="text-3xl font-bold text-purple-400">
@@ -55,36 +47,37 @@ export default function Sidebar() {
         </h1>
 
         {/* Player Card */}
+        <div className="mt-6 overflow-hidden rounded-3xl border border-purple-500/20 bg-gradient-to-br from-zinc-800 to-zinc-900 p-5 shadow-xl">
 
-        <div className="mt-6 rounded-2xl bg-zinc-800 p-4">
+          <div className="flex items-center gap-4">
 
-          <div className="flex items-center gap-3">
-
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-purple-600 text-2xl">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-purple-500 bg-purple-600 text-3xl shadow-lg">
               {avatar}
             </div>
 
-            <div>
+            <div className="flex-1">
 
-              <h2 className="font-bold">
+              <h2 className="text-lg font-bold">
                 {player.name}
               </h2>
 
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-purple-300">
                 {title}
               </p>
+
+              <div className="mt-2 inline-flex rounded-full bg-purple-500/20 px-3 py-1 text-xs font-bold text-purple-300">
+                ⭐ Level {player.level}
+              </div>
 
             </div>
 
           </div>
 
-          <div className="mt-4">
+          <div className="mt-6">
 
-            <div className="flex justify-between text-sm">
+            <div className="mb-2 flex justify-between text-xs text-zinc-400">
 
-              <span>
-                ⭐ Level {player.level}
-              </span>
+              <span>XP</span>
 
               <span>
                 {player.xp} / {player.maxXp}
@@ -92,14 +85,42 @@ export default function Sidebar() {
 
             </div>
 
-            <div className="mt-2 h-2 rounded-full bg-zinc-700">
+            <div className="h-3 overflow-hidden rounded-full bg-zinc-700">
 
               <div
-                className="h-2 rounded-full bg-purple-500 transition-all duration-700"
+                className="h-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-700"
                 style={{
                   width: `${percentage}%`,
                 }}
               />
+
+            </div>
+
+          </div>
+
+          <div className="mt-5 grid grid-cols-2 gap-3">
+
+            <div className="rounded-xl bg-zinc-800 p-3 text-center">
+
+              <p className="text-xs text-zinc-400">
+                Coins
+              </p>
+
+              <p className="mt-1 text-lg font-bold text-yellow-400">
+                🪙 {player.coins}
+              </p>
+
+            </div>
+
+            <div className="rounded-xl bg-zinc-800 p-3 text-center">
+
+              <p className="text-xs text-zinc-400">
+                Streak
+              </p>
+
+              <p className="mt-1 text-lg font-bold text-orange-400">
+                🔥 {player.streak}
+              </p>
 
             </div>
 
@@ -180,20 +201,14 @@ export default function Sidebar() {
         </Link>
 
         <Link
-          href="/dashboard/chests"
-          className={`flex items-center justify-between rounded-xl px-4 py-3 transition ${
-            pathname === "/dashboard/chests"
+          href="/dashboard/equipment"
+          className={`rounded-xl px-4 py-3 transition ${
+            pathname === "/dashboard/equipment"
               ? "bg-purple-600 text-white"
               : "hover:bg-purple-600"
           }`}
         >
-          <span>📦 Chests</span>
-
-          {unopenedChests > 0 && (
-            <span className="rounded-full bg-yellow-500 px-2 py-1 text-xs font-bold text-black">
-              {unopenedChests}
-            </span>
-          )}
+          ⚔ Equipment
         </Link>
 
         <Link
@@ -231,10 +246,7 @@ export default function Sidebar() {
           </p>
 
           <p className="mt-2 text-2xl font-bold text-orange-400">
-            {player.streak} Day
-            {player.streak === 1
-              ? ""
-              : "s"}
+            {player.streak} Day{player.streak === 1 ? "" : "s"}
           </p>
 
         </div>

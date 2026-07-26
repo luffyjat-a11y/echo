@@ -48,19 +48,19 @@ export default function CharacterPreview() {
         <EquipmentSlot
           icon="🐉"
           label="Avatar"
-          value={avatar?.name ?? "Default Avatar"}
+          itemName={avatar?.name ?? "Default Avatar"}
         />
 
         <EquipmentSlot
           icon="🌌"
           label="Title"
-          value={title?.name ?? "None Equipped"}
+          itemName={title?.name ?? "None Equipped"}
         />
 
         <EquipmentSlot
           icon="💜"
           label="Theme"
-          value={theme?.name ?? "Default Theme"}
+          itemName={theme?.name ?? "Default Theme"}
         />
 
       </div>
