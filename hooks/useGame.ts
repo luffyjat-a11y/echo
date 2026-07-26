@@ -84,16 +84,10 @@ export function useGame() {
 
     if (!game) return;
 
-    const loadedPlayer = {
-      ...defaultPlayer,
-      ...game.player,
-      skills: {
-        ...defaultPlayer.skills,
-        ...(game.player?.skills ?? {}),
-      },
-      skillPoints:
-        game.player?.skillPoints ?? 0,
-    };
+    const loadedPlayer: Player = {
+  ...defaultPlayer,
+  ...game.player,
+};
 
     if (isNewDay(game.lastReset)) {
       setPlayer(loadedPlayer);
