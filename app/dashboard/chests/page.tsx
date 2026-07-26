@@ -3,9 +3,8 @@
 import { useState } from "react";
 
 import { useGameContext } from "@/context/GameContext";
-
 import RewardPopup from "@/components/loot/RewardPopup";
-import { shopItems } from "@/data/shopItems";
+import { LootItem } from "@/types/loot";
 
 export default function ChestsPage() {
   const {
@@ -14,7 +13,7 @@ export default function ChestsPage() {
     clearOpenedChests,
   } = useGameContext();
 
-  const [reward, setReward] = useState<any>(null);
+  const [reward, setReward] = useState<LootItem | null>(null);
 
   const unopened = chests.filter(
     (c) => !c.opened
@@ -25,24 +24,13 @@ export default function ChestsPage() {
 
     if (!loot) return;
 
-    const item = shopItems.find(
-      (i) => i.id === loot.itemId
-    );
-
-    if (!item) return;
-
-    setReward({
-      icon: item.icon,
-      name: item.name,
-      rarity: loot.rarity,
-    });
+    setReward(loot);
   }
 
   return (
     <div className="space-y-8">
 
       <div>
-
         <h1 className="text-4xl font-black">
           📦 Chests
         </h1>
@@ -50,7 +38,6 @@ export default function ChestsPage() {
         <p className="mt-2 text-zinc-400">
           Open mysterious chests to unlock rewards.
         </p>
-
       </div>
 
       <div className="rounded-3xl bg-zinc-900 p-6">
@@ -99,9 +86,7 @@ export default function ChestsPage() {
               </div>
 
               <button
-                onClick={() =>
-                  handleOpen(chest.id)
-                }
+                onClick={() => handleOpen(chest.id)}
                 className="mt-8 w-full rounded-xl bg-purple-600 py-3 font-bold hover:bg-purple-500"
               >
                 Open Chest
