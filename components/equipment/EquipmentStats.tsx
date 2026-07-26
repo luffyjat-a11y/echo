@@ -19,33 +19,33 @@ export default function EquipmentStats({
       <div className="space-y-3">
 
         <Stat
-          label="❤️ Health"
-          value={player.maxHealth}
+          label="⭐ Level"
+          value={player.level}
         />
 
         <Stat
-          label="⚔ Attack"
-          value={player.attack}
+          label="✨ Current XP"
+          value={player.xp}
         />
 
         <Stat
-          label="🛡 Defense"
-          value={player.defense}
+          label="🎯 Max XP"
+          value={player.maxXp}
         />
 
         <Stat
-          label="⚡ Stamina"
-          value={player.maxStamina}
+          label="💰 Coins"
+          value={player.coins}
         />
 
         <Stat
-          label="🎯 Crit Chance"
-          value={`${player.critChance}%`}
+          label="🔥 Daily Streak"
+          value={`${player.streak} Day${player.streak === 1 ? "" : "s"}`}
         />
 
         <Stat
-          label="💨 Speed"
-          value={player.speed}
+          label="🏆 Next Level"
+          value={player.level + 1}
         />
 
       </div>
