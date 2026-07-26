@@ -297,11 +297,11 @@ function upgradePlayerSkill(
 function openChest(chestId: number) {
   const loot = rollLoot();
 
-  const result = unlockItem(
-    player,
-    inventory,
-    loot.itemId
-  );
+ const result = unlockItem(
+  player,
+  inventory,
+  loot.id
+);
 
   setPlayer(result.player);
   setInventory(result.inventory);
